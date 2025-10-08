@@ -3,6 +3,7 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { classValidatorFormatter } from './class-validator-formatter';
@@ -14,6 +15,7 @@ import { ErrorsService } from 'src/features/errors/errors.service';
 @Catch()
 export class GlobalFilter implements ExceptionFilter {
   constructor(private readonly errorsService: ErrorsService) {}
+  private readonly logger = new Logger(GlobalFilter.name);
   async catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
@@ -30,17 +32,21 @@ export class GlobalFilter implements ExceptionFilter {
         isHttp: exception instanceof HttpException ? true : false,
 
         //TODO: Manage User Based on Your Authentication Method
-        user: 'Not Yet Managed',
+        user: null,
 
         time: new Date(),
         ip: request.ip,
       };
 
       //! Log error to the console
-      console.log(errorRecord);
+      this.logger.error(errorRecord);
 
       //! Store in DB
-      await this.errorsService.saveErrorToDatabase(errorRecord);
+      try {
+        await this.errorsService.saveErrorToDatabase(errorRecord);
+      } catch (error) {
+        this.logger.error('Error saving log to database:', error);
+      }
 
       const res: TResponse = {
         data: null,
@@ -58,12 +64,12 @@ export class GlobalFilter implements ExceptionFilter {
 
       // making sure its not class-validator error
       // if it is, classValidatorFormatter will return valid TResponse
-      const classValidationError = classValidatorFormatter(
+      const formatClassValidatorError = classValidatorFormatter(
         exception,
         request.url,
       );
-      if (classValidationError) {
-        return response.status(status).send(classValidationError);
+      if (formatClassValidatorError) {
+        return response.status(status).send(formatClassValidatorError);
       }
       const res: TResponse = {
         data: null,

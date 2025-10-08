@@ -6,6 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { GlobalFilter } from './common/filters/global.filter';
 import { ErrorsService } from './features/errors/errors.service';
+import { ConsoleLogger, Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
