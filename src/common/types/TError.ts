@@ -1,4 +1,5 @@
 export type TError = {
+  uuid?: string;
   message: string;
   ip: string;
   path: string;
