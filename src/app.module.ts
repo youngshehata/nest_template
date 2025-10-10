@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ErrorsModule } from './features/errors/errors.module';
+import { LoggingModule } from './features/logging/logging.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { ErrorsModule } from './features/errors/errors.module';
       envFilePath: '.env',
     }),
     ErrorsModule,
+    LoggingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

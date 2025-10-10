@@ -12,6 +12,7 @@ import { TError } from '../types/TError';
 import { TResponse } from '../types/TResponse';
 import { CONST_INTERNAL_SERVER_ERROR } from '@app/common/constraints/errors/errors.constraints';
 import { ErrorsService } from 'src/features/errors/errors.service';
+import fireAndForget from '../helpers/fireAndForget';
 
 @Catch()
 export class GlobalFilter implements ExceptionFilter {
@@ -44,13 +45,13 @@ export class GlobalFilter implements ExceptionFilter {
       this.logger.error(`ErrorID: ${errorId}`, errorRecord.stack);
 
       // Store in DB asynchronously (fire and forget)
-      (async () => {
+      fireAndForget(async () => {
         try {
           await this.errorsService.saveErrorToDatabase(errorRecord);
         } catch (error) {
           this.logger.error(`Error saving log to DB (id=${errorId}):`, error);
         }
-      })();
+      });
 
       const res: TResponse = {
         data: null,
