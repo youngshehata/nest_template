@@ -8,12 +8,14 @@ import { GlobalFilter } from './common/filters/global.filter';
 import { ErrorsService } from './features/errors/errors.service';
 import { ResponseFormatterInterceptor } from './common/interceptors/response-formatter/response-formatter.interceptor';
 import { LoggingService } from './features/logging/logging.service';
-
+import helmet from '@fastify/helmet';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
   );
+
+  await app.register(helmet);
 
   app.useLogger(
     process.env.NODE_ENV === 'production'
