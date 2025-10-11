@@ -13,7 +13,7 @@ export class LoggingService implements OnModuleInit {
   private async log(data: TLog) {
     try {
       const date = new Date().toISOString().split('T')[0]; // gives date without time, e.g. 2025-10-08
-      await fs.appendFile(`logs/${date}.json`, `${JSON.stringify(data)}\n`);
+      await fs.appendFile(`logs/${date}.json`, `${JSON.stringify(data)},\n`);
     } catch (error) {
       this.logger.error(error);
     }

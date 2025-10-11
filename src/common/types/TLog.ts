@@ -1,7 +1,7 @@
 export type TLog = {
   level: TLogLevel;
   message: string;
-  timestamp: Date;
+  timestamp?: Date;
   metaData?: TLogMetaData;
 };
 
@@ -14,4 +14,5 @@ export type TLogMetaData = {
   path?: string;
   method?: string;
   statusCode?: number;
+  stack?: string;
 };
