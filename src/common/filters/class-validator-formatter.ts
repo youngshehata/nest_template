@@ -17,7 +17,7 @@ export const classValidatorFormatter = (exception: any, path: string) => {
 
   const response: TResponse = {
     data: null,
-    error: message[0],
+    error: message.concat().join(', '),
     message: message[0],
     statusCode: 400,
     success: false,

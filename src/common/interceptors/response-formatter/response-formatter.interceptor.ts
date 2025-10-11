@@ -24,7 +24,7 @@ export class ResponseFormatterInterceptor implements NestInterceptor {
         const formatted: TResponse = {
           success: true,
           message: data?.message ?? 'OK',
-          data: data?.data ?? data,
+          data,
           error: null,
           path: req.url,
           statusCode: res.statusCode ?? 200,
