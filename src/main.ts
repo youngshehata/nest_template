@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {
   FastifyAdapter,
@@ -12,34 +12,36 @@ import helmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { swaggerOptions } from './config/swagger/swagger.options';
+import { RolesGuard } from './common/guards/roles.guard';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
   );
 
+  //! ############ Helmet ############
   await app.register(helmet);
 
+  //! ############ Logger ############
   app.useLogger(
     process.env.NODE_ENV === 'production'
       ? ['error', 'warn']
       : ['error', 'warn', 'log', 'debug', 'verbose'],
   );
 
-  // Swagger
+  //! ############ Swagger ############
   const documentFactory = () => {
     return SwaggerModule.createDocument(app, swaggerOptions);
   };
   SwaggerModule.setup('swagger', app, documentFactory);
 
+  //! ############ Globals ############
   app.useGlobalFilters(
     new GlobalFilter(app.get(ErrorsService), app.get(LoggingService)),
   );
-
   app.useGlobalInterceptors(
     new ResponseFormatterInterceptor(app.get(LoggingService)),
   );
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -47,8 +49,13 @@ async function bootstrap() {
     }),
   );
 
+  //TODO: Uncomment if you want to use guards
+  // const reflector = app.get(Reflector);
+  // app.useGlobalGuards(new RolesGuard(reflector));
+
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0', () => {
     console.log(`Server running on port ${process.env.PORT ?? 3000}`);
   });
 }
+
 bootstrap();
