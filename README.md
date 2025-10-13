@@ -1,98 +1,299 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank">
+    <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
+  </a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# NestJS Backend Template
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This repository provides a ready-to-use **NestJS backend template** designed to save you setup time by including the essential building blocks of any production-grade server.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🧩 Included Features
 
-## Project setup
+- **Global Exception Handler**
+- **Unified Response Formatter**
+- **Centralized Logging Service**
+- **Authentication Guard (Reflector-based)**
+- **Fastify Adapter** for higher performance
+- **Swagger Documentation** for API visibility
+- **Global Validation Pipes** for clean input handling
 
-```bash
-$ npm install
+---
+
+## ⚙️ Exception Handler
+
+**File:** `src/common/filters/global.filter.ts`  
+**Class:** `GlobalFilter`
+
+Handles all thrown exceptions (both expected and unexpected) across the app.
+
+### What it does:
+
+- Catches all exceptions globally using `@Catch()`.
+- Differentiates between expected (HTTP) and unexpected (system) errors.
+- Logs errors to:
+  - **Console** — for quick visibility during development.
+  - **File** — for long-term debugging and auditing.
+  - **Database** — optional via `ErrorsService` integration.
+- Returns a consistent error response to the client.
+- Automatically attaches a unique `errorId` for easier tracking.
+- Prevents raw stack traces or sensitive data from leaking to clients.
+
+### Example output:
+
+```json
+{
+  "success": false,
+  "message": "Internal Server Error occurred with id: (13c9f...), Please contact support.",
+  "data": null,
+  "error": "Internal Server Error occurred with id: (13c9f...), Please contact support.",
+  "path": "/api/users",
+  "statusCode": 500,
+  "timestamp": "2025-10-13T09:00:00.000Z"
+}
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## ⚙️ Unified Response Formatter
 
-# watch mode
-$ npm run start:dev
+**File:** `src/common/interceptors/response-formatter/response-formatter.interceptor.ts`  
+**Class:** `ResponseFormatterInterceptor`
 
-# production mode
-$ npm run start:prod
+Ensures all successful API responses follow a single consistent structure.
+
+### What it does:
+
+- Intercepts every successful request before sending the response.
+- Wraps all responses in a common structure for frontend consistency.
+- Automatically includes:
+  - `success` — boolean indicating operation result.
+  - `message` — response message.
+  - `data` — actual payload.
+  - `path` — requested route.
+  - `statusCode` — HTTP response status.
+  - `timestamp` — UTC time of the response.
+- Handles thrown errors gracefully when used with `GlobalFilter`.
+- Reduces frontend parsing logic by guaranteeing predictable API shape.
+
+### Example output:
+
+```json
+{
+  "success": true,
+  "message": "User retrieved successfully",
+  "data": {
+    "id": 1,
+    "name": "Ahmed"
+  },
+  "path": "/api/users/1",
+  "statusCode": 200,
+  "timestamp": "2025-10-13T09:00:00.000Z"
+}
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## ⚙️ Centralized Logging Service
 
-# e2e tests
-$ npm run test:e2e
+**File:** `src/features/logging/logging.service.ts`  
+**Class:** `LoggingService`
 
-# test coverage
-$ npm run test:cov
+Provides a unified way to log application activity, errors, and debug data.
+
+### What it does:
+
+- Acts as a wrapper around Nest's Logger class.
+- Supports logging to:
+  - **Console** for quick debugging.
+  - **File system** for long-term traceability.
+  - **Database** (optional) via an integrated model or service.
+- Handles both system logs and business logs.
+- Can be injected anywhere in the app to log:
+  - Requests
+  - Exceptions
+  - Database queries
+  - Business-level events
+- Makes debugging and monitoring more consistent.
+
+### Example usage:
+
+```ts
+this.logger.log('User created successfully');
+this.logger.error('Database connection failed', error.stack);
+this.logger.warn('High memory usage detected');
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## ⚙️ Authentication Guard
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+**File:** `src/common/guards/auth.guard.ts`  
+**Class:** `AuthGuard`
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+Protects routes by validating JWT tokens and handling public endpoints.
+
+### What it does:
+
+- Implements `CanActivate` to decide if a request can proceed.
+- Uses `Reflector` to check for metadata set by `@Public()` decorator.
+- Validates JWT tokens (or other credentials) from the `Authorization` header.
+- Automatically attaches the decoded user to `request.user`.
+- Can be applied globally or per-controller.
+
+### Example setup (global guard):
+
+```ts
+import { NestFactory, Reflector } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { AuthGuard } from './common/guards/auth.guard';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new AuthGuard(reflector));
+  await app.listen(3000);
+}
+bootstrap();
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Example usage with public routes:
 
-## Resources
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { Public } from '../decorators/public.decorator';
 
-Check out a few resources that may come in handy when working with NestJS:
+@Controller('auth')
+export class AuthController {
+  @Public()
+  @Get('login')
+  login() {
+    return { message: 'This route is public' };
+  }
+}
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## ⚙️ Fastify Adapter
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**File:** `main.ts`
 
-## Stay in touch
+Replaces Express with Fastify for better performance and lower overhead.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### What it does:
 
-## License
+- Uses `NestFastifyApplication` instead of the default Express adapter.
+- Improves request throughput and memory efficiency.
+- Works seamlessly with all NestJS features (pipes, filters, guards, etc.).
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Example setup:
+
+```ts
+import { NestFactory } from '@nestjs/core';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+---
+
+## ⚙️ Swagger Documentation
+
+**File:** `main.ts`
+
+Provides automatic API documentation and testing via Swagger UI.
+
+### What it does:
+
+- Generates interactive API documentation at runtime.
+- Groups endpoints by controller automatically.
+- Simplifies backend testing without Postman.
+
+### Example setup:
+
+```ts
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+const config = new DocumentBuilder()
+  .setTitle('Backend API')
+  .setDescription('API documentation for backend template')
+  .setVersion('1.0')
+  .build();
+const document = SwaggerModule.createDocument(app, config);
+SwaggerModule.setup('api/docs', app, document);
+```
+
+---
+
+## ⚙️ Global Validation Pipes
+
+**File:** `main.ts`
+
+Enforces input validation automatically across the entire app.
+
+### What it does:
+
+- Ensures incoming data matches DTO structures.
+- Strips out unknown properties.
+- Returns clear validation error messages.
+
+### Example setup:
+
+```ts
+import { ValidationPipe } from '@nestjs/common';
+
+app.useGlobalPipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+);
+```
+
+---
+
+## ✅ Summary
+
+This template includes a solid foundation for any NestJS project:
+
+- ✅ Unified and safe response handling.
+- ✅ Strong error management.
+- ✅ Configurable logging.
+- ✅ Token-based authentication.
+- ✅ Fast and secure Fastify setup.
+- ✅ Developer-friendly Swagger documentation.
+- ✅ Strict and clean input validation.
+
+Use this as a starter for production-ready backend development.
+
+---
+
+## 📦 Getting Started
+
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Configure your environment variables
+4. Run the application: `npm run start:dev`
+5. Access Swagger docs at: `http://localhost:3000/api/docs`
+
+---
+
+## 📝 About Me
+
+my name is Ahmed Shehata, i'll be happy to hear from you if you have any suggestions any enhancements
+https://ashehata.xyz
