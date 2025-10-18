@@ -11,6 +11,7 @@ import {
   CONST_DEFAULT_PAGE,
   CONST_DEFAULT_PAGE_SIZE,
 } from '@app/common/constraints/pagination/pagination.constraints';
+import * as path from 'path';
 
 @Injectable()
 export class LoggingService implements OnModuleInit {
@@ -39,6 +40,12 @@ export class LoggingService implements OnModuleInit {
   //! ################################# Private Get Logs By Day  ###############################
   private async getLogsByDay(day: Date): Promise<TLog[]> {
     const date = formatDateOnly(day);
+    const filePath = path.join('logs', `${date}.json`);
+    try {
+      await fs.access(filePath);
+    } catch {
+      return [];
+    }
     let data = await fs.readFile(`logs/${date}.json`, 'utf-8');
     // remove trailing comma if it exists
     data = data.trim().replace(/,+\s*$/, '');
