@@ -18,6 +18,7 @@ export class ResponseFormatterInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const res = context.switchToHttp().getResponse<FastifyReply>();
     const req = res.request as any;
+    const now = new Date().getTime();
     // handle the response payload
     return next.handle().pipe(
       map((data) => {
@@ -33,7 +34,7 @@ export class ResponseFormatterInterceptor implements NestInterceptor {
 
         // logging to console
         this.logger.log(
-          `Response ${res.statusCode} - ${req.method} ${req.url}`,
+          `Response ${res.statusCode} - ${req.method} ${req.url} Time= ${new Date().getTime() - now}ms`,
         );
         // logging to file
         this.loggingService.logToFile({
