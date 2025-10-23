@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ErrorsModule } from './features/errors/errors.module';
 import { LoggingModule } from './features/logging/logging.module';
-import { BlacklistModule } from './features/blacklist/blacklist.module';
 
 @Module({
   imports: [

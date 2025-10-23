@@ -12,8 +12,6 @@ import helmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { swaggerOptions } from './config/swagger/swagger.options';
-import { BlacklistInterceptor } from './common/interceptors/blacklist/blacklist.interceptor';
-import { BlacklistService } from './features/blacklist/blacklist.service';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
