@@ -12,6 +12,8 @@ import helmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { swaggerOptions } from './config/swagger/swagger.options';
+import { BlacklistInterceptor } from './common/interceptors/blacklist/blacklist.interceptor';
+import { BlacklistService } from './features/blacklist/blacklist.service';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -39,6 +41,8 @@ async function bootstrap() {
     new GlobalFilter(app.get(ErrorsService), app.get(LoggingService)),
   );
   app.useGlobalInterceptors(
+    //TODO : Uncomment and import BlacklistService on app.module if you want to use blacklist
+    //new BlacklistInterceptor(app.get(BlacklistService)),
     new ResponseFormatterInterceptor(app.get(LoggingService)),
   );
   app.useGlobalPipes(
