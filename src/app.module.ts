@@ -4,16 +4,28 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ErrorsModule } from './features/errors/errors.module';
 import { LoggingModule } from './features/logging/logging.module';
+import { AuthModule } from './features/auth/auth.module';
+import { UsersModule } from './features/users/users.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './common/guards/auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-    }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     ErrorsModule,
     LoggingModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    JwtService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
