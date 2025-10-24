@@ -6,8 +6,12 @@ export class AuthDto {
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(200)
-  @ApiProperty({ type: String, required: true, default: 'example' })
-  username: string;
+  @ApiProperty({
+    type: String,
+    required: true,
+    default: 'a.shehata.dev@gmail.com',
+  })
+  email: string;
 
   @IsString()
   @IsNotEmpty()

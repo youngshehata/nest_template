@@ -12,6 +12,7 @@ import helmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { swaggerOptions } from './config/swagger/swagger.options';
+import { fastifyCookie } from '@fastify/cookie';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -20,6 +21,9 @@ async function bootstrap() {
 
   //! ############ Helmet ############
   await app.register(helmet);
+
+  //! ############ Cookie ############
+  app.register(fastifyCookie as any);
 
   //! ############ Logger ############
   app.useLogger(
