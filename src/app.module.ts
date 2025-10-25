@@ -14,7 +14,13 @@ import { PrismaService } from 'prisma/prisma.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath:
+        process.env.NODE_ENV === 'development'
+          ? '.env.development'
+          : '.env.production',
+    }),
     ErrorsModule,
     LoggingModule,
     AuthModule,
