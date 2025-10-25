@@ -7,16 +7,22 @@ export type User = any;
 export class UsersService {
   private readonly users = [
     {
-      userId: 1,
+      id: 1,
       email: 'a.shehata.dev@gmail.com',
       password: 'password123',
+      name: 'Ahmed Shehata',
     },
     {
-      userId: 2,
+      id: 2,
       email: 'test@gmail.com',
       password: 'test',
+      name: 'test name',
     },
   ];
+
+  async findUnique(email: string): Promise<User | undefined> {
+    return this.users.find((user) => user.email === email);
+  }
 
   async findOne(email: string): Promise<User | undefined> {
     return this.users.find((user) => user.email === email);

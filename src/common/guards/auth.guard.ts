@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { ConfigService } from '@nestjs/config';
 import { FastifyRequest } from 'fastify';
+import { RequestUserDto } from 'src/features/users/dtos/request_user.dto';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -37,7 +38,15 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
-      request['user'] = payload;
+
+      const userToAttach: RequestUserDto = {
+        id: payload.sub,
+        email: payload.email,
+        roles: payload.roles,
+        name: payload.name,
+      };
+
+      request['user'] = userToAttach;
     } catch {
       throw new UnauthorizedException();
     }

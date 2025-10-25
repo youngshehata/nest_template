@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
 import { PayloadDto } from './dtos/payload.dto';
