@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Errors {
+  id      Int      @id @default(autoincrement())
+  uuid    String   @db.VarChar(100)
+  message String   @db.VarChar(10000)
+  ip      String?  @db.VarChar(100)
+  time    DateTime @default(now()) @db.Timestamp(6)
+  path    String?  @db.VarChar(200)
+  method  String?  @db.VarChar(100)
+  stack   String? 
+  isHttp  Boolean?
+  user    String?
+}

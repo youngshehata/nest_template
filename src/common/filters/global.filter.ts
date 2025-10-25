@@ -40,7 +40,7 @@ export class GlobalFilter implements ExceptionFilter {
         method: request.method,
         stack: (exception as Error).stack || 'NO-STACK',
         isHttp: exception instanceof HttpException,
-        user: null, // TODO: Handle this depending on authentication
+        user: JSON.stringify(request.user),
         time: new Date(),
         ip: request.ip,
       };
@@ -87,7 +87,7 @@ export class GlobalFilter implements ExceptionFilter {
         path: request.url,
         method: request.method,
         statusCode: status,
-        user: null,
+        user: JSON.stringify(request.user),
         requestId: request.id,
       },
     });

@@ -1,11 +1,11 @@
 export type TError = {
-  uuid?: string;
+  uuid: string;
   message: string;
   ip: string;
+  time: Date;
   path: string;
   method: string;
   stack: string;
-  time: Date;
   isHttp: boolean;
   user?: any;
 };

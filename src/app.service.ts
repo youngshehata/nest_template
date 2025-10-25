@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 
 @Injectable()
@@ -8,6 +8,7 @@ export class AppService {
   }
 
   test(req: FastifyRequest) {
+    throw new InternalServerErrorException();
     return req.user;
   }
 }
