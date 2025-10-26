@@ -1,10 +1,16 @@
-import { AbstractRepo } from '@app/common/abstracts/abstract.repo';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model } from 'mongoose';
+import { ErrorDocument } from './schemas/error.schema';
+import { AbstractDocument } from 'src/config/database/abstract.repo';
 
 @Injectable()
-export class ErrorsRepo extends AbstractRepo<PrismaService['errors']> {
-  constructor(private readonly prisma: PrismaService) {
-    super(prisma.errors);
+export class ErrorsRepo extends AbstractDocument<ErrorDocument> {
+  constructor(
+    @InjectModel(ErrorDocument.name)
+    private readonly errorModel: Model<ErrorDocument>,
+    @InjectConnection() connection: Connection,
+  ) {
+    super(connection, errorModel);
   }
 }

@@ -10,7 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { RolesModule } from './features/roles/roles.module';
-import { PrismaService } from 'prisma/prisma.service';
+import { MongoDBModule } from './config/database/mongodb.module';
 
 @Module({
   imports: [
@@ -21,6 +21,7 @@ import { PrismaService } from 'prisma/prisma.service';
           ? '.env.development'
           : '.env.production',
     }),
+    MongoDBModule,
     ErrorsModule,
     LoggingModule,
     AuthModule,
@@ -31,7 +32,6 @@ import { PrismaService } from 'prisma/prisma.service';
   providers: [
     AppService,
     JwtService,
-    PrismaService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

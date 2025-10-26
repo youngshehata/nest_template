@@ -6,6 +6,6 @@ import { ErrorsRepo } from './errors.repo';
 export class ErrorsService {
   constructor(private readonly repo: ErrorsRepo) {}
   async saveErrorToDatabase(error: TError) {
-    await this.repo.create({ data: error });
+    await this.repo.create(error);
   }
 }
