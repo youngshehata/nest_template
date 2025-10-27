@@ -11,6 +11,7 @@ import { AuthGuard } from './common/guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { RolesModule } from './features/roles/roles.module';
 import { PrismaService } from 'prisma/prisma.service';
+import { UploadService } from './common/services/upload.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PrismaService } from 'prisma/prisma.service';
     AppService,
     JwtService,
     PrismaService,
+    UploadService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

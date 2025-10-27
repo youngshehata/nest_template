@@ -16,6 +16,7 @@ import { fastifyCookie } from '@fastify/cookie';
 import { RolesGuard } from './common/guards/roles.guard';
 import { RolesService } from './features/roles/roles.service';
 import { UsersService } from './features/users/users.service';
+import fastifyMultipart from '@fastify/multipart';
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -25,8 +26,13 @@ async function bootstrap() {
   //! ############ Helmet ############
   await app.register(helmet);
 
-  //! ############ Cookie ############
+  //! ############ Fastify ############
   app.register(fastifyCookie as any);
+  app.register(fastifyMultipart as any, {
+    limits: {
+      fileSize: 50 * 1024 * 1024, // 50 MB limit
+    },
+  });
 
   //! ############ Logger ############
   app.useLogger(
