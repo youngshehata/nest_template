@@ -11,6 +11,7 @@ import { AuthGuard } from './common/guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { RolesModule } from './features/roles/roles.module';
 import { MongoDBModule } from './config/database/mongodb.module';
+import { UploadService } from './common/services/upload.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MongoDBModule } from './config/database/mongodb.module';
   providers: [
     AppService,
     JwtService,
+    UploadService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
