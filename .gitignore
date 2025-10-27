@@ -2,6 +2,8 @@
 /dist
 /node_modules
 /build
+/public
+/Nest_Template_Bruno
 
 # Logs
 logs
