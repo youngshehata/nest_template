@@ -2,10 +2,6 @@
 /dist
 /node_modules
 /build
-/public
-
-# Bruno
-/Nest_Template_Bruno
 
 # Logs
 logs
@@ -54,4 +50,3 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
